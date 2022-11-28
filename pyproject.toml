@@ -6,8 +6,10 @@ authors = []
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7.3"
+python = "^3.10"
 nonebot2 = "^2.0.0-beta.1"
+nonebot-adapter-onebot = "^2.1.5"
+gmqtt = "^0.6.11"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.0"
