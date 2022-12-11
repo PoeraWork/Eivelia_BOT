@@ -8,4 +8,3 @@ config.mqtt_user
 config.mqtt_password
 """
 from . import mqtt
-from .mqtt import client_init

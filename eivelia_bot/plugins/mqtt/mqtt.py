@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from gmqtt import Client as MQTTClient
-import nonebot,asyncio
+import nonebot
 
+from eivelia_bot.config import Config
 from nonebot.log import logger
+from gmqtt import Client as MQTTClient
 
 driver = nonebot.get_driver()
-config = driver.config
-TOPIC = "poera_in"
-topic = "poera_out"
-msg = "test"
+config = Config.parse_obj(driver.config)
+
 
 def on_connect(client, flags, rc, properties):
     client.subscribe(config.mqtt_topic, qos=0)
@@ -16,7 +15,7 @@ def on_connect(client, flags, rc, properties):
 
 
 def on_message(client, topic, payload, qos, properties):
-    logger.info('RECV MSG:', payload)
+    logger.info('RECV MSG:'+str(payload))
 
 
 def on_disconnect(client, packet, exc=None):
@@ -26,9 +25,14 @@ def on_disconnect(client, packet, exc=None):
 def on_subscribe(client, mid, qos, properties):
     logger.info('SUBSCRIBED')
 
+def get_client(plugin_name:str) -> MQTTClient:
+    logger.info(plugin_name+'获取了client')
+    return client
+
+client: MQTTClient = MQTTClient(config.mqtt_client_id)
+
 @driver.on_startup
 async def client_init() -> MQTTClient:
-    client = MQTTClient(config.mqtt_client_id)
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
@@ -36,11 +40,9 @@ async def client_init() -> MQTTClient:
     if config.mqtt_user:
         client.set_auth_credentials(config.mqtt_user, str(config.mqtt_password))
     await client.connect(config.mqtt_host, config.mqtt_port)
-    global client1
-    client1 = client
-    client.publish(topic,msg)
+    logger.debug('conect '+str(config.mqtt_host)+' '+str(config.mqtt_port))
     return client
 
 @driver.on_shutdown
 async def disconnect():
-    await nonebot.require("nonebot_plugin_mqtt").mqtt_client.disconnect()
+    await client.disconnect()
