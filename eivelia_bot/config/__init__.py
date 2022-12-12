@@ -7,3 +7,4 @@ class Config(BaseModel, extra=Extra.ignore):
     mqtt_password: str
     mqtt_host:str
     mqtt_port:int
+    fire_repo_user_id:int
