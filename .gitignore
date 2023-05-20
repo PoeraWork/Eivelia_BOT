@@ -143,3 +143,4 @@ dmypy.json
 
 accounts/
 .vscode/
+Hradware/main/main.ino
